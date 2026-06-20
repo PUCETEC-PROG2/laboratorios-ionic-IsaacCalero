@@ -9,7 +9,7 @@ const RepoItem: React.FC<Repository> = (repository) => {
         <IonItemSliding>
             <IonItem>
               <IonThumbnail slot="start">
-                <img src= {repository.avatarUrl}
+                <img src = {repository.owner.avatar_url}
                  alt="Avatar" 
                  />
               </IonThumbnail>
