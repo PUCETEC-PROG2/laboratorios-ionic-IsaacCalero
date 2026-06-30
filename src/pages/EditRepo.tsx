@@ -1,15 +1,14 @@
 import { IonButton, IonContent, IonHeader, IonInput, IonPage, IonText, IonTextarea, IonTitle, IonToolbar, useIonToast, useIonViewWillEnter } from '@ionic/react';
-import './Tab2.css';
-import { useHistory } from 'react-router-dom';
+import './EditRepo.css';
+import { useHistory, useParams } from 'react-router-dom';
 import React from 'react';
 import { RepositoryPayload } from '../interfaces/RepositoryPayload';
-import { createRepository } from '../services/GithubService';
+import { updateRepository } from '../services/GithubService';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-const Tab2: React.FC = () => {
-
+const EditRepo: React.FC = () => {
   const history = useHistory();
-  const [present] = useIonToast();
+  const { owner, repoName } = useParams<{ owner: string; repoName: string }>();
   const [repositoryData, setRepositoryData] = React.useState<RepositoryPayload>({
     name: '',
     description: '',
@@ -17,28 +16,29 @@ const Tab2: React.FC = () => {
 
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState('');
+  const [present] = useIonToast();
 
-  const saveRepository = async () => {
+  const updateRepo = async () => {
     if (repositoryData.name.trim() === '') {
       setErrorMsg('El nombre del repositorio es obligatorio.');
       return;
     }
     setLoading(true);
-    createRepository(repositoryData).then(() => {
+    updateRepository(owner, repoName, repositoryData).then(() => {
       present({
-        message: 'Repositorio creado exitosamente',
+        message: 'Repositorio actualizado exitosamente',
         duration: 2000,
         color: 'success'
       });
       history.push('/tab1');
     }).catch((error) => {
-      setErrorMsg("Error al crear el repositorio: " + error);
+      setErrorMsg("Error al actualizar el repositorio: " + error);
       present({
-        message: 'Error al crear el repositorio: ' + error,
+        message: 'Error al actualizar el repositorio: ' + error,
         duration: 3000,
         color: 'danger'
       });
-      console.error("Error al crear el repositorio:", error);
+      console.error("Error al actualizar el repositorio:", error);
     }).finally(() => {
       setLoading(false);
     });
@@ -46,24 +46,23 @@ const Tab2: React.FC = () => {
 
   useIonViewWillEnter(() => {
     setRepositoryData({
-      name: '',
+      name: repoName,
       description: '',
     });
     setErrorMsg('');
   });
 
-
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Formulario De Repositorio</IonTitle>
+          <IonTitle>Editar Repositorio</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Formulario de Repositorio</IonTitle>
+            <IonTitle size="large">Editar Repositorio</IonTitle>
           </IonToolbar>
         </IonHeader>
 
@@ -94,9 +93,9 @@ const Tab2: React.FC = () => {
             expand="block"
             fill="solid"
             color="primary"
-            onClick={saveRepository}
+            onClick={updateRepo}
           >
-            Guardar
+            Actualizar
           </IonButton>
         </div>
 
@@ -107,4 +106,4 @@ const Tab2: React.FC = () => {
   );
 };
 
-export default Tab2;
+export default EditRepo;

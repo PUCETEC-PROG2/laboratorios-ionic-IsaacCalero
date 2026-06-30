@@ -49,7 +49,7 @@ const Tab1: React.FC = () => {
         {!loading && Array.isArray(repositoryList) && (
           <IonList>
             {repositoryList.map((repo) => (
-              <RepoItem {...repo} key={repo.id}/>
+              <RepoItem {...repo} key={repo.id} onDelete={fetchRepos}/>
             ))}
           </IonList>
         )}
